@@ -159,11 +159,23 @@ class ContactsApps extends Contacts{
             console.log(contact.get())
         }
     }
+    setStorage(key, value) {
+        let days = getDay(10)
+        window.localStorage.setItem(key, value)
+        document.cookie = `storageExpiration=${key} ${value}; max-age=${days}`;
+    }
+    getStorage(key) {
+        return window.localStorage.getItem(key)
+    }
 }
-
+let app = new ContactsApps({})
 console.log(ContactsApps.create())
+app.setStorage('hello', 'world')
+console.log(app.getStorage('hello'))
 
-
+function getDay(numDay) {
+    return numDay * 86400
+}
 
 
 
