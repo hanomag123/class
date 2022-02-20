@@ -167,12 +167,44 @@ class ContactsApps extends Contacts{
     getStorage(key) {
         return window.localStorage.getItem(key)
     }
+    async getData() {
+        console.log(this.getStorage('users'))
+        // let users = JSON.parse(this.getStorage('users'))
+        if (this.getStorage('users')) {
+            return false
+        }else {
+            let url = 'https://jsonplaceholder.typicode.com/users';
+            let responce = await fetch(url)
+            let data = await responce.json()
+    
+            for(let key of data) {
+                contact.add(new User(key))
+            }
+            let container = document.querySelector('.contacts__container')
+            let containerItem = document.querySelectorAll('.contacts__item');
+            let arr = contact.get()
+            for(let key of containerItem) {
+                container.removeChild(key)
+            }
+            for(let i = 0; i < arr.length; i++) {
+                let div = document.createElement('div')
+                div.className = 'contacts__item';
+                for(let key in arr[i]) {
+                    div.innerHTML += `<p data-type=${key}> ${key}: ${arr[i][key]}</p> `
+                }
+                container.appendChild(div)
+            }
+            window.localStorage.setItem('users', JSON.stringify(contact.get()))
+            return data;
+        }
+    }
 }
-let app = new ContactsApps({})
-console.log(ContactsApps.create())
-app.setStorage('hello', 'world')
-console.log(app.getStorage('hello'))
+window.localStorage.clear()
 
+let app = new ContactsApps({})
+console.log(app.getData())
+
+ContactsApps.create()
 function getDay(numDay) {
     return numDay * 86400
 }
